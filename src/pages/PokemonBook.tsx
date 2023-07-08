@@ -17,6 +17,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { PokemonData } from "../Types";
 import { Link, Outlet } from "react-router-dom";
+import { hiraToKana } from "../utils";
 
 type filterPokemonData = {
   abilities: string[];
@@ -61,7 +62,7 @@ const PokemonBook = () => {
       setFilterPokemonPageData(pokemonPageData?.items);
     } else {
       const _filterPokemonPageData = pokemonAllData?.items.filter(
-        (item) => item.name.indexOf(inputValue) !== -1
+        (item) => item.name.indexOf(hiraToKana(inputValue)) !== -1
       );
       setFilterPokemonPageData(_filterPokemonPageData);
       setLoading(false);
