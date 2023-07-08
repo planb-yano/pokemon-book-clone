@@ -16,8 +16,30 @@ import {
 import React, { useEffect, useState } from "react";
 import { PokemonData } from "../Types";
 
+type filterPokemonData = {
+  abilities: string[];
+  classification: string;
+  description: string;
+  height: number;
+  name: string;
+  no: number;
+  types: string[];
+  weight: number;
+}[];
+
 const PokemonBook = () => {
+  const [pokemonAllData, setPokemonAllData] = useState<PokemonData>();
   const [pokemonPageData, setPokemonPageData] = useState<PokemonData>();
+  const [filterPokemonPageData, setFilterPokemonPageData] =
+    useState<filterPokemonData>();
+  const [inputValue, setInputValue] = useState<string>("");
+
+  const getPokemonAllData = async () => {
+    const _pokemonAllData = await fetch(
+      "https://poke-iota-ten.vercel.app/api/pokedex?limit=1009"
+    ).then((res) => res.json());
+    setPokemonAllData(_pokemonAllData);
+  };
 
   const getPokemonPageData = async () => {
     const _pokemonPageData = await fetch(
@@ -26,8 +48,20 @@ const PokemonBook = () => {
     setPokemonPageData(_pokemonPageData);
   };
   useEffect(() => {
+    getPokemonAllData();
     getPokemonPageData();
   }, []);
+
+  const handleSearch = () => {
+    if (inputValue === "") {
+      setFilterPokemonPageData(pokemonPageData?.items);
+    } else {
+      const _filterPokemonPageData = pokemonAllData?.items.filter(
+        (item) => item.name.indexOf(inputValue) !== -1
+      );
+      setFilterPokemonPageData(_filterPokemonPageData);
+    }
+  };
 
   return (
     <Box w="42%" margin="0 auto">
@@ -36,8 +70,12 @@ const PokemonBook = () => {
       </Heading>
       <Divider />
       <Flex m="30px 0 20px">
-        <Input placeholder="ピカチュウ" mr="20px" />
-        <Button>検索</Button>
+        <Input
+          placeholder="ピカチュウ"
+          mr="20px"
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <Button onClick={handleSearch}>検索</Button>
       </Flex>
       <TableContainer>
         <Table>
@@ -48,12 +86,19 @@ const PokemonBook = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {pokemonPageData?.items.map((item) => (
-              <Tr key={item.no}>
-                <Td>{item.no}</Td>
-                <Td>{item.name}</Td>
-              </Tr>
-            ))}
+            {filterPokemonPageData
+              ? filterPokemonPageData.map((item) => (
+                  <Tr key={item.no}>
+                    <Td>{item.no}</Td>
+                    <Td>{item.name}</Td>
+                  </Tr>
+                ))
+              : pokemonPageData?.items.map((item) => (
+                  <Tr key={item.no}>
+                    <Td>{item.no}</Td>
+                    <Td>{item.name}</Td>
+                  </Tr>
+                ))}
           </Tbody>
         </Table>
       </TableContainer>
