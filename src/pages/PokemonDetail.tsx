@@ -14,17 +14,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
-type PokemonDetailData = {
-  abilities: string[];
-  classification: string;
-  description: string;
-  height: number;
-  name: string;
-  no: number;
-  types: string[];
-  weight: number;
-};
+import { getPokemonData } from "../utils";
+import { INITIALURL } from "../Constant";
+import { PokemonDetailData } from "../Types";
 
 const PokemonDetail = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,15 +24,16 @@ const PokemonDetail = () => {
     useState<PokemonDetailData>();
 
   const { pokemonId } = useParams();
-  const getPokemonDetailData = async () => {
-    const _pokemonDetailData = await fetch(
-      `https://poke-iota-ten.vercel.app/api/pokedex/${pokemonId}`
-    ).then((res) => res.json());
-    setPokemonDetailData(_pokemonDetailData);
-    setLoading(false);
-  };
+
   useEffect(() => {
-    getPokemonDetailData();
+    const fetchPokemonData = async () => {
+      const _pokemonDetailData = await getPokemonData(
+        `${INITIALURL}/${pokemonId}`
+      );
+      setPokemonDetailData(_pokemonDetailData);
+      setLoading(false);
+    };
+    fetchPokemonData();
   }, []);
 
   return (

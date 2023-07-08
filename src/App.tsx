@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import PokemonBook from "./pages/PokemonBook";
 import { Box } from "@chakra-ui/react";
 import { Routes, Route } from "react-router-dom";

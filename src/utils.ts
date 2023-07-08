@@ -3,3 +3,7 @@ export const hiraToKana = (text: string) => {
     String.fromCharCode(m.charCodeAt(0) + 96)
   );
 };
+
+export const getPokemonData = async (url: string) => {
+  return await fetch(url).then((res) => res.json());
+};

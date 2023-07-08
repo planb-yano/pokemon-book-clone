@@ -1,0 +1,1 @@
+export const INITIALURL = "https://poke-iota-ten.vercel.app/api/pokedex"

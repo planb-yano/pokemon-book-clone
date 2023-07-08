@@ -15,20 +15,10 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { PokemonData } from "../Types";
+import { PokemonData, filterPokemonData } from "../Types";
 import { Link, Outlet } from "react-router-dom";
-import { hiraToKana } from "../utils";
-
-type filterPokemonData = {
-  abilities: string[];
-  classification: string;
-  description: string;
-  height: number;
-  name: string;
-  no: number;
-  types: string[];
-  weight: number;
-}[];
+import { getPokemonData, hiraToKana } from "../utils";
+import { INITIALURL } from "../Constant";
 
 const PokemonBook = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -38,23 +28,18 @@ const PokemonBook = () => {
     useState<filterPokemonData>();
   const [inputValue, setInputValue] = useState<string>("");
 
-  const getPokemonAllData = async () => {
-    const _pokemonAllData = await fetch(
-      "https://poke-iota-ten.vercel.app/api/pokedex?limit=1009"
-    ).then((res) => res.json());
-    setPokemonAllData(_pokemonAllData);
-  };
-
-  const getPokemonPageData = async () => {
-    const _pokemonPageData = await fetch(
-      "https://poke-iota-ten.vercel.app/api/pokedex"
-    ).then((res) => res.json());
-    setPokemonPageData(_pokemonPageData);
-    setLoading(false);
-  };
   useEffect(() => {
-    getPokemonAllData();
-    getPokemonPageData();
+    const fetchPokemonData = async () => {
+      // すべてのポケモンデータを取得
+      const _pokemonAllData = await getPokemonData(`${INITIALURL}?limit=1009`);
+      setPokemonAllData(_pokemonAllData);
+
+      // 最初に表示させるポケモンデータを取得
+      const _pokemonPageData = await getPokemonData(INITIALURL);
+      setPokemonPageData(_pokemonPageData);
+      setLoading(false);
+    };
+    fetchPokemonData();
   }, []);
 
   const handleSearch = () => {
